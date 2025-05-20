@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import scipy.stats
 from scipy import stats
 
 # Load data
@@ -16,6 +17,9 @@ returns = prices.pct_change().dropna()
 # 2. Filter out zero returns
 filtered_returns = returns[returns != 0]
 
+
+n_test_result = scipy.stats.normaltest(filtered_returns)
+print("Normality test result", n_test_result)
 
 # Basic stats
 n = len(filtered_returns)
@@ -90,6 +94,25 @@ def plot_sequence():
     plt.gcf().autofmt_xdate()
     plt.grid(True)
     plt.savefig('baltic_benchmark_index_20_years.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
+
+# V1_1: visualize returns
+def plot_returns():
+    import datetime as dt
+    import matplotlib.pyplot as plt
+
+    x = [dt.datetime.strptime(d,'%d.%m.%Y').date() for d in dates.values[:-1]]
+    y = returns
+
+    plt.figure(figsize=(12, 6))
+    plt.title('Baltic Benchmark Index Returns (2005-05-01 - 2025-05-01)', fontsize=14)
+    plt.xlabel('Date')
+    plt.ylabel('Returns')
+    plt.plot(x,y)
+    plt.gcf().autofmt_xdate()
+    plt.grid(True)
+    plt.savefig('baltic_benchmark_index_returns_20_years.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 
@@ -169,6 +192,7 @@ def plot_variance_known_mean():
 
 
 plot_sequence()
+plot_returns()
 plot_mean()
 plot_variance_unknown_mean()
 plot_variance_known_mean()
